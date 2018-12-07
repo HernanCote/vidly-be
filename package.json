@@ -1,0 +1,21 @@
+{
+  "name": "vidly-be",
+  "version": "1.0.0",
+  "description": "Vidly back-end for Vidly React App",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon app.js"
+  },
+  "keywords": [
+    "video",
+    "rental",
+    "back-end"
+  ],
+  "author": "Hernán Cote",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.16.4",
+    "joi": "^14.3.0"
+  }
+}
