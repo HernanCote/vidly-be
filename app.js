@@ -30,7 +30,7 @@ app.get("/api/genres", (req, res, next) => {
 app.get("/api/genres/:id", (req, res, next) => {
   const genre = validateGenreId(req.params.id);
   if (!genre) {
-    return res.status(404).send(`Genre with id ${genreId} was not found`);
+    return res.status(404).send(`Genre with id ${req.params.id} was not found`);
   }
 
   res.status(200).send(genre);
@@ -54,7 +54,7 @@ app.post("/api/genres", (req, res, next) => {
 app.put("/api/genres/:id", (req, res, next) => {
   const genre = validateGenreId(req.params.id);
   if (!genre) {
-    return res.status(404).send(`Genre with id ${genreId} was not found`);
+    return res.status(404).send(`Genre with id ${req.params.id} was not found`);
   }
 
   const { error } = validateGenre(req.body);
@@ -69,7 +69,7 @@ app.put("/api/genres/:id", (req, res, next) => {
 app.delete("/api/genres/:id", (req, res, next) => {
   const genre = validateGenreId(req.params.id);
   if (!genre) {
-    return res.status(404).send(`Genre with id ${genreId} was not found`);
+    return res.status(404).send(`Genre with id ${req.params.id} was not found`);
   }
 
   const index = genres.indexOf(genre);
@@ -89,7 +89,9 @@ function validateGenre(genre) {
 }
 
 function validateGenreId(genreId) {
-  const genreId = parseInt(req.params.id);
-  const genre = genres.find(g => g.id == genreId);
+  const id = parseInt(genreId);
+  const genre = genres.find(g => g.id == id);
   return genre;
 }
+
+module.exports = app;
