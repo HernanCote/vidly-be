@@ -12,6 +12,7 @@ router.get("/:id", async (req, res, next) => {
     const genre = await Genre.findById(req.params.id);
     res.status(200).send(genre);
   } catch (ex) {
+    console.log(ex.message);
     return res.status(404).send(`Genre with id ${req.params.id} was not found`);
   }
 });
