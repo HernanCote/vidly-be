@@ -1,6 +1,5 @@
 const { Movie, validate } = require("../models/movie");
 const { Genre } = require("../models/genre");
-const mongoose = require("mongoose");
 const express = require("express");
 const router = express.Router();
 
@@ -30,18 +29,25 @@ router.post("/", async (req, res, next) => {
     return res.status(400).send("Invalid genre id.");
   }
 
-  let movie = new Movie({
-    title: req.body.title,
-    genre: {
-      _id: genre._id,
-      name: genre.name
-    },
-    numberInStock: req.body.numberInStock,
-    dailyRentalRate: req.body.dailyRentalRate
-  });
+  try {
+    const movie = new Movie({
+      title: req.body.title,
+      genre: {
+        _id: genre._id,
+        name: genre.name
+      },
+      numberInStock: req.body.numberInStock,
+      dailyRentalRate: req.body.dailyRentalRate
+    });
 
-  movie = await movie.save();
-  res.status(201).send(movie);
+    await movie.save();
+    res.status(201).send(movie);
+  } catch (ex) {
+    for (field in ex.errors) {
+      console.log(ex.errors[field].message);
+    }
+    res.status(500).send("Ops! Something failed on our side");
+  }
 });
 
 router.put("/:id", async (req, res, next) => {
@@ -70,7 +76,7 @@ router.put("/:id", async (req, res, next) => {
   );
 
   if (!movie) {
-    return res.status(404).send("The moview with the given ID was not found");
+    return res.status(404).send("The movie with the given ID was not found");
   }
   res.status(200).send(movie);
 });
@@ -78,7 +84,7 @@ router.put("/:id", async (req, res, next) => {
 router.delete("/:id", async (req, res, next) => {
   const movie = await Movie.findByIdAndRemove(req.params.id);
   if (!movie) {
-    return res.status(404).send("The movie with the given id was not found");
+    return res.status(404).send("The movie with the given ID was not found");
   }
 
   res.status(204).send();
