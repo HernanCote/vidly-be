@@ -1,5 +1,5 @@
-const mongoose = require("mongoose");
-const Joi = require("joi");
+const mongoose = require('mongoose');
+const Joi = require('joi');
 
 const customerSchema = new mongoose.Schema({
   name: {
@@ -31,5 +31,5 @@ function validateCustomer(customer) {
   return Joi.validate(customer, schema);
 }
 
-exports.Customer = mongoose.model("Customer", customerSchema);
+exports.Customer = mongoose.model('Customer', customerSchema);
 exports.validate = validateCustomer;

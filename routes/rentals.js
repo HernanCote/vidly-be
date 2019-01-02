@@ -1,19 +1,20 @@
-const { Rental, validate } = require("../models/rental");
-const { Movie } = require("../models/movie");
-const { Customer } = require("../models/customer");
-const express = require("express");
+const { Rental, validate } = require('../models/rental');
+const auth = require('../middleware/auth');
+const { Movie } = require('../models/movie');
+const { Customer } = require('../models/customer');
+const express = require('express');
 const router = express.Router();
-const mongoose = require("mongoose");
-const Fawn = require("fawn");
+const mongoose = require('mongoose');
+const Fawn = require('fawn');
 
 Fawn.init(mongoose);
 
-router.get("/", async (req, res, next) => {
+router.get('/', async (req, res, next) => {
   const rentals = await Rental.find().sort({ dateOut: -1 });
   res.status(200).send(rentals);
 });
 
-router.post("/", async (req, res, next) => {
+router.post('/', auth, async (req, res, next) => {
   const { error } = validate(req.body);
   if (error) {
     return res.status(400).send(error.details[0].message);
@@ -22,16 +23,16 @@ router.post("/", async (req, res, next) => {
   const customer = await Customer.findById(req.body.customerId);
 
   if (!customer) {
-    return res.status(404).send("Invalid Customer ID");
+    return res.status(404).send('Invalid Customer ID');
   }
 
   const movie = await Movie.findById(req.body.movieId);
   if (!movie) {
-    return res.status(404).send("Invalid Movie ID");
+    return res.status(404).send('Invalid Movie ID');
   }
 
   if (movie.numberInStock === 0)
-    return res.statusCode(400).send("This movie is not available");
+    return res.statusCode(400).send('This movie is not available');
 
   const rental = new Rental({
     customer: {
@@ -49,9 +50,9 @@ router.post("/", async (req, res, next) => {
 
   try {
     new Fawn.Task()
-      .save("rentals", rental)
+      .save('rentals', rental)
       .update(
-        "movies",
+        'movies',
         { _id: movie._id },
         {
           $inc: { numberInStock: -1 }
@@ -63,15 +64,15 @@ router.post("/", async (req, res, next) => {
     for (field in ex.errors) {
       console.log(ex.errors[fields].message);
     }
-    res.status(500).send("Ops! Something failed on our side");
+    res.status(500).send('Ops! Something failed on our side');
   }
 });
 
-router.get("/:id", async (req, res) => {
+router.get('/:id', async (req, res) => {
   const rental = await Rental.findById(req.params.id);
 
   if (!rental) {
-    return res.status(404).send("The rental with the given ID was not found");
+    return res.status(404).send('The rental with the given ID was not found');
   }
 
   res.status(200).send(rental);

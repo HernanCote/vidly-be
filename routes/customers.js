@@ -1,13 +1,14 @@
-const express = require("express");
+const express = require('express');
+const auth = require('../middleware/auth');
 const router = express.Router();
-const { Customer, validate } = require("../models/customer");
+const { Customer, validate } = require('../models/customer');
 
-router.get("/", async (req, res, next) => {
+router.get('/', async (req, res, next) => {
   const customers = await Customer.find().sort({ name: 1 });
   res.status(200).send(customers);
 });
 
-router.get("/:id", async (req, res, next) => {
+router.get('/:id', async (req, res, next) => {
   try {
     const customer = await Customer.findById(req.params.id);
     return res.status(200).send(customer);
@@ -19,7 +20,7 @@ router.get("/:id", async (req, res, next) => {
   }
 });
 
-router.post("/", async (req, res, next) => {
+router.post('/', async (req, res, next) => {
   const { error } = validate(req.body);
 
   if (error) {
@@ -40,11 +41,11 @@ router.post("/", async (req, res, next) => {
     for (field in ex.errors) {
       console.log(ex.errors[field].message);
     }
-    res.status(500).send("An error occurred");
+    res.status(500).send('An error occurred');
   }
 });
 
-router.put("/:id", async (req, res, next) => {
+router.put('/:id', auth, async (req, res, next) => {
   const { error } = validate(req.body);
 
   if (error) {
@@ -72,7 +73,7 @@ router.put("/:id", async (req, res, next) => {
   res.status(200).send(customer);
 });
 
-router.delete("/:id", async (req, res, next) => {
+router.delete('/:id', async (req, res, next) => {
   const customer = await Customer.findByIdAndRemove(req.params.id);
 
   if (!customer) {

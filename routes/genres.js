@@ -1,13 +1,15 @@
-const express = require("express");
+const express = require('express');
+const auth = require('../middleware/auth');
+const admin = require('../middleware/admin');
 const router = express.Router();
-const { Genre, validate } = require("../models/genre");
+const { Genre, validate } = require('../models/genre');
 
-router.get("/", async (req, res, next) => {
+router.get('/', async (req, res, next) => {
   const genres = await Genre.find();
   res.status(200).send(genres);
 });
 
-router.get("/:id", async (req, res, next) => {
+router.get('/:id', async (req, res, next) => {
   try {
     const genre = await Genre.findById(req.params.id);
     res.status(200).send(genre);
@@ -17,7 +19,7 @@ router.get("/:id", async (req, res, next) => {
   }
 });
 
-router.post("/", async (req, res, next) => {
+router.post('/', auth, async (req, res, next) => {
   const { error } = validate(req.body);
   if (error) {
     return res.status(400).send(error.details[0].message);
@@ -35,11 +37,11 @@ router.post("/", async (req, res, next) => {
     for (field in ex.errors) {
       console.log(ex.errors[field].message);
     }
-    res.status(500).send("An error occurred");
+    res.status(500).send('An error occurred');
   }
 });
 
-router.put("/:id", async (req, res, next) => {
+router.put('/:id', auth, async (req, res, next) => {
   const { error } = validate(req.body);
   if (error) {
     return res.status(400).send(error.details[0].message);
@@ -60,7 +62,7 @@ router.put("/:id", async (req, res, next) => {
   res.status(200).send(genre);
 });
 
-router.delete("/:id", async (req, res, next) => {
+router.delete('/:id', [auth, admin], async (req, res, next) => {
   const genre = await Genre.findByIdAndRemove(req.params.id);
 
   if (!genre) {

@@ -1,5 +1,5 @@
-const Joi = require("joi");
-const mongoose = require("mongoose");
+const Joi = require('joi');
+const mongoose = require('mongoose');
 
 const rentalSchema = new mongoose.Schema({
   customer: {
@@ -60,5 +60,5 @@ function validateRental(rental) {
   return Joi.validate(rental, schema);
 }
 
-exports.Rental = mongoose.model("Rental", rentalSchema);
+exports.Rental = mongoose.model('Rental', rentalSchema);
 exports.validate = validateRental;
