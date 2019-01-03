@@ -17,9 +17,14 @@ if (!config.get('jwtPrivateKey')) {
   process.exit(1);
 }
 
+if (!config.get('db')) {
+  console.log('FATAL ERROR: db connection string is not defined');
+  process.exit(1);
+}
+
 mongoose
   .connect(
-    'mongodb://localhost/vidly',
+    config.get('db'),
     { useNewUrlParser: true }
   )
   .then(() => console.log('Connected to mongodb'))
